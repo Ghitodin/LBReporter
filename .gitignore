@@ -141,5 +141,9 @@ tmtagsHistory
 *.sublime-workspace
 .bundle
 
+#Generated Ui classes
+autogen_ui
+
 #IDE files
-.idea
+.idea/
+.idea/workspace.xml
