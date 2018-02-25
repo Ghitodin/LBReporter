@@ -19,14 +19,12 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
 
-        # init ui:
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
         self.__init_ui()
         # set action events:
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionSettings.triggered.connect(self.open_settings_dialog)
-        self.ui.actionUpdate.triggered.connect(self.__renew_user, type=Qt.QueuedConnection)
+        self.ui.actionUpdate.triggered.connect(self.__on_update_data, type=Qt.QueuedConnection)
+        self.ui.actionUpdate.triggered.connect(lambda: self.ui.actionUpdate.setDisabled(True))
         # set other callbacks:
         self.local_bitcoins.on_user_received.connect(self.__on_user_obtained)
 
@@ -41,6 +39,8 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, APP_NAME, 'Something wrong', QMessageBox.Ok)
 
     def __init_ui(self):
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
         self.__draw_user(self.user)
         self.setWindowTitle(APP_NAME)
 
@@ -93,3 +93,10 @@ class MainWindow(QMainWindow):
             self.ui.createdAtFieldLabel.show()
             self.ui.createdAtLabel.show()
             self.ui.createdAtLabel.setText(user.created_at)
+
+
+    def __on_update_data(self):
+        pass # need to obtain and save data from server
+
+    def __data_updated(self):
+        self.ui.actionUpdate.setDisabled(False)
