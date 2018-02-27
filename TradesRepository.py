@@ -1,9 +1,9 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from TradesDataSource import TradesDataSource
 
 
-class TradesRepository(QObject):
+class TradesRepository(TradesDataSource):
     __cached_last_trade = None
-    __is_valid_cache_last_trade = False
+    __is_valid_cache = False
 
     class __TradeRepository:
         def __init__(self):
@@ -16,27 +16,29 @@ class TradesRepository(QObject):
             TradesRepository.instance = TradesRepository.__TradeRepository()
         return TradesRepository.instance
 
-    def save_trades(self, trades):
+    def save_trades(self, trades, user_name):
         pass
 
-# TODO: need to extends those classes:
-class TradesLocalDataSource:
+    def get_last_trade(self, username):
+        if self.__is_valid_cache is True and self.__cached_last_trade is not None:
+            self.on_trades_loaded.emit([self.__cached_last_trade])
+            return
+
+
+class TradesLocalDataSource(TradesDataSource):
+    __trades_dao = None
+
+    class __TradesLocalDataSource:
+        def __init__(self):
+            __trades_dao = TradesDao()
+
+    instance = None
+
+    def __new__(cls):
+        if not TradesLocalDataSource.instance:
+            TradesLocalDataSource.instance = TradesLocalDataSource.__TradesLocalDataSource()
+        return TradesLocalDataSource.instance
+
+
+class TradesDao:
     pass
-
-
-class TradesDataSource:
-
-    on_trades_loaded = pyqtSignal()
-    on_get_trade = pyqtSignal()
-
-    def get_all_trades(self):
-        pass
-
-    def get_trades(self, count):
-        pass
-
-    def get_last_trade(self):
-        pass
-
-    def save_trades(self, trades):
-        pass

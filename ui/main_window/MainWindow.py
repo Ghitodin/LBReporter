@@ -10,7 +10,7 @@ from data_model.User import User
 from ui.autogen_ui.Ui_MainWindow import Ui_MainWindow
 from ui.settings_dialog.SettingsDialog import SettingsDialog
 
-# TODO: если нет сети и пользователь не получен, то повторять запросы время от времени
+
 class MainWindow(QMainWindow):
     app_settings = AppSettings()
     user = User()

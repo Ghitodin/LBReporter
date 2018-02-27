@@ -33,8 +33,7 @@ class LocalBitcoins(QObject):
         try:
             conn = api.hmac(hmac, hmac_secret)
             on_finished_callback(conn.call(method, url).json())
-        except ConnectionError as e:
-            print(e)
+        except ConnectionError:
             if self.__request_failures_counter is 0:  # is first error
                 self.on_error_occurred.emit('No network access')
 
@@ -44,8 +43,7 @@ class LocalBitcoins(QObject):
                                function=self.__thread_worker, args=(hmac, hmac_secret, method, url,
                                                                     on_finished_callback, repeat_if_failure))
                 thread.start()
-        except Exception as e:
-            print(e)
+        except Exception:
             self.on_error_occurred.emit('Internal API error!')
         else:
             self.__request_failures_counter = 0
