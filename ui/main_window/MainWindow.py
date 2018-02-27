@@ -1,16 +1,16 @@
-import functools
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
+from TradesRepository import TradesRepository
 from EventLogger import EventLogger
 from LocalBitcoins import LocalBitcoins
 from AppConfig import APP_NAME
 from Settings import AppSettings
-from User import User
+from data_model.User import User
 from ui.autogen_ui.Ui_MainWindow import Ui_MainWindow
 from ui.settings_dialog.SettingsDialog import SettingsDialog
 
-
+# TODO: если нет сети и пользователь не получен, то повторять запросы время от времени
 class MainWindow(QMainWindow):
     app_settings = AppSettings()
     user = User()
@@ -23,10 +23,13 @@ class MainWindow(QMainWindow):
         # set action events:
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.actionSettings.triggered.connect(self.open_settings_dialog)
-        self.ui.actionUpdate.triggered.connect(self.__on_update_data, type=Qt.QueuedConnection)
-        self.ui.actionUpdate.triggered.connect(lambda: self.ui.actionUpdate.setDisabled(True))
+        self.ui.actionUpdate.triggered.connect(self.__on_update_trades, type=Qt.QueuedConnection)
         # set other callbacks:
+        self.local_bitcoins.on_error_occurred.connect(self.__on_api_error)
         self.local_bitcoins.on_user_received.connect(self.__on_user_obtained)
+        self.local_bitcoins.on_request_started.connect(self.__on_request_to_api_ui_lock)
+        self.local_bitcoins.on_request_finished.connect(self.__on_request_to_api_ui_unlock)
+        #self.local_bitcoins.on_error_occurred.connect(self.__on_request_to_api_ui_unlock)
 
         self.__renew_user()
 
@@ -50,11 +53,12 @@ class MainWindow(QMainWindow):
 
         except ValueError:
             pass
-        except KeyError:
-            EventLogger.show_warning("Wrong response format! Need to update the App.")
 
     def __on_user_obtained(self, user):
         self.__draw_user(user)
+
+    def __on_api_error(self, err_str):
+        EventLogger.show_warning(err_str)
 
     def __draw_user(self, user):
         # hide ui elements:
@@ -94,9 +98,14 @@ class MainWindow(QMainWindow):
             self.ui.createdAtLabel.show()
             self.ui.createdAtLabel.setText(user.created_at)
 
+    def __on_request_to_api_ui_lock(self):
+        self.ui.actionUpdate.setDisabled(True)
 
-    def __on_update_data(self):
-        pass # need to obtain and save data from server
+    def __on_request_to_api_ui_unlock(self):
+        self.ui.actionUpdate.setDisabled(False)
+
+    def __on_update_trades(self):
+        pass  # need to obtain and save data from server
 
     def __data_updated(self):
         self.ui.actionUpdate.setDisabled(False)
