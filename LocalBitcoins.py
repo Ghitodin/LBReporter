@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from lbcapi import api
 from requests.exceptions import ConnectionError
 
+from data_model.Trade import Trade
 from data_model.User import User
 
 
@@ -20,13 +21,19 @@ class LocalBitcoins(QObject):
     __REQUEST_REPEAT_DELAY_SEC = 3.0
 
     def get_user(self, hmac, hmac_secret, repeat_if_failure=True):
-        if hmac == '' or hmac_secret == '':
-            self.on_error_occurred.emit("Wrong hmac or hmac secret")
-            return
+        self.__checkKeys(hmac, hmac_secret)
 
         self.on_request_started.emit()
         thread = Thread(target=self.__thread_worker, args=(hmac, hmac_secret, 'GET', '/api/myself/',
-                                                           self.__on_get_user_finished, repeat_if_failure), daemon=True)
+                                                           self.__on_get_user_finished, repeat_if_failure),
+                        daemon=True)
+        thread.start()
+
+    def get_released_trades_test(self, hmac, hmac_secret, repeat_if_failure=False):
+        self.__checkKeys(hmac, hmac_secret)
+        thread = Thread(target=self.__thread_worker, args=(hmac, hmac_secret, 'GET', '/api/dashboard/released/',
+                                                           self.__on_get_released_trades_finished, repeat_if_failure),
+                        daemon=True)
         thread.start()
 
     def __thread_worker(self, hmac, hmac_secret, method, url, on_finished_callback, repeat_if_failure):
@@ -62,8 +69,19 @@ class LocalBitcoins(QObject):
         except KeyError:
             self.on_error_occurred.emit('Wrong response format! Need to update the App.')
 
+    def __on_get_released_trades_finished(self, json):
+        print(json)
+        trades = Trade.parse_from_json(json)
+        for trade in trades:
+            print(trade)
+
     def __get_error(self):
         pass
+
+    def __checkKeys(self, hmac, hmac_secret):
+        if hmac == '' or hmac_secret == '':
+            self.on_error_occurred.emit("Wrong hmac or hmac secret")
+            return
 
     class ServerError:
         message = None

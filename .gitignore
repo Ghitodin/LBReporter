@@ -148,3 +148,4 @@ autogen_ui
 #IDE files
 .idea/
 .idea/workspace.xml
+*.db

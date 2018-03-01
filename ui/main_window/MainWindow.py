@@ -105,7 +105,8 @@ class MainWindow(QMainWindow):
         self.ui.actionUpdate.setDisabled(False)
 
     def __on_update_trades(self):
-        pass  # need to obtain and save data from server
+        print('clicked')
+        self.local_bitcoins.get_released_trades_test(self.app_settings.hmac, self.app_settings.hmac_secret)
 
     def __data_updated(self):
         self.ui.actionUpdate.setDisabled(False)

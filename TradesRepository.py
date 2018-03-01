@@ -1,3 +1,4 @@
+from TradesDao import TradesDao
 from TradesDataSource import TradesDataSource
 
 
@@ -39,6 +40,3 @@ class TradesLocalDataSource(TradesDataSource):
             TradesLocalDataSource.instance = TradesLocalDataSource.__TradesLocalDataSource()
         return TradesLocalDataSource.instance
 
-
-class TradesDao:
-    pass
