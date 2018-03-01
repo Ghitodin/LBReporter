@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>drawable/ic_update.png</file>
+    <file>drawable/logo.png</file>
 </qresource>
 </RCC>
