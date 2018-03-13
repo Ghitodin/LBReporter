@@ -8,6 +8,14 @@ uiFilesExtension = 'ui'
 rcFilesExtension = 'qrc'
 generationResultFolder = uiFolder + '/autogen_ui'
 
+if not os.path.exists(generationResultFolder):
+    try:
+        print('Creation autogen ui directory...')
+        os.makedirs(generationResultFolder)
+        print('Success')
+    except OSError:
+        print('Error creation autogen dir!')
+
 
 def get_files_list(path, file_extension):
     for filename in glob.iglob(path + '.' + file_extension, recursive=True):
