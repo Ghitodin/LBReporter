@@ -149,3 +149,5 @@ autogen_ui
 .idea/
 .idea/workspace.xml
 *.db
+.idea/misc.xml
+.idea/LBReporter.iml

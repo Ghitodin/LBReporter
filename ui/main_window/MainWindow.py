@@ -48,6 +48,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(APP_NAME)
 
     def __renew_user(self):
+        if not self.app_settings.hmac or not self.app_settings.hmac_secret:
+            self.__on_request_to_api_ui_lock()
+            return
         try:
             self.local_bitcoins.get_user(self.app_settings.hmac, self.app_settings.hmac_secret)
 

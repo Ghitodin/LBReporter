@@ -1,9 +1,10 @@
-from PyQt5.QtCore import QStandardPaths
+from PyQt5.QtCore import QStandardPaths, QDir, QFile
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from AppConfig import ORG_NAME, APP_NAME
+from EventLogger import EventLogger
 
 Base = declarative_base()
 
@@ -40,17 +41,22 @@ class TradesTable(Base):
     user = relationship(UsersTable)
 
 
-# TODO: need to create the database if it does not exist on this path:
-print(QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) +
-                       '\\' + ORG_NAME + '\\' + APP_NAME + '\\test_db.db')
+__db_name = APP_NAME + '_cache.db'
+__db_path = QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) + \
+            '/' + ORG_NAME + '/' + APP_NAME
+__db_file_path = __db_path + '/' + __db_name
+__db_dir = QDir(__db_path)
 
-# Create an engine that stores data in the local directory's
-# sqlalchemy_example.db file.
-#engine = create_engine('sqlite:///C:\\path\\to\\database.db')
+print(__db_path)
 
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
-#Base.metadata.create_all(engine)
+if not __db_dir.exists():
+    if not __db_dir.mkpath(__db_path):
+        EventLogger.show_warning("Can't create a cache, access denied!")
+
+__db_file = QFile(__db_file_path)
+if not __db_file.exists(__db_file_path):
+    engine = create_engine('sqlite:///' + __db_path + '/' + __db_name)
+    Base.metadata.create_all(engine)
 
 
 class TradesDao:
