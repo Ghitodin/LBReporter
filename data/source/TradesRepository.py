@@ -1,5 +1,5 @@
-from TradesDao import TradesDao
-from TradesDataSource import TradesDataSource
+from data.source.local.TradesDao import TradesDao
+from data.source.TradesDataSource import TradesDataSource
 
 
 class TradesRepository(TradesDataSource):
@@ -24,19 +24,3 @@ class TradesRepository(TradesDataSource):
         if self.__is_valid_cache is True and self.__cached_last_trade is not None:
             self.on_trades_loaded.emit([self.__cached_last_trade])
             return
-
-
-class TradesLocalDataSource(TradesDataSource):
-    __trades_dao = None
-
-    class __TradesLocalDataSource:
-        def __init__(self):
-            __trades_dao = TradesDao()
-
-    instance = None
-
-    def __new__(cls):
-        if not TradesLocalDataSource.instance:
-            TradesLocalDataSource.instance = TradesLocalDataSource.__TradesLocalDataSource()
-        return TradesLocalDataSource.instance
-

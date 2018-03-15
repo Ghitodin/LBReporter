@@ -1,12 +1,11 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
-from TradesRepository import TradesRepository
 from EventLogger import EventLogger
 from LocalBitcoins import LocalBitcoins
 from AppConfig import APP_NAME
 from Settings import AppSettings
-from data_model.User import User
+from data.DataModel import User
 from ui.autogen_ui.Ui_MainWindow import Ui_MainWindow
 from ui.settings_dialog.SettingsDialog import SettingsDialog
 

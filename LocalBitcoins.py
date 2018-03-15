@@ -5,8 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from lbcapi import api
 from requests.exceptions import ConnectionError
 
-from data_model.Trade import Trade
-from data_model.User import User
+from data.DataModel import User, Trade
 
 
 class LocalBitcoins(QObject):
