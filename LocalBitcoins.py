@@ -15,6 +15,7 @@ class LocalBitcoins(QObject):
     on_user_received = pyqtSignal(User)
     on_request_started = pyqtSignal()
     on_request_finished = pyqtSignal()
+    on_trades_received = pyqtSignal(list)
 
     __request_failures_counter = 0
     __REQUEST_REPEAT_DELAY_SEC = 3.0
@@ -71,8 +72,7 @@ class LocalBitcoins(QObject):
     def __on_get_released_trades_finished(self, json):
         print(json)
         trades = Trade.parse_from_json(json)
-        for trade in trades:
-            print(trade)
+        self.on_trades_received.emit(list(trades))
 
     def __get_error(self):
         pass

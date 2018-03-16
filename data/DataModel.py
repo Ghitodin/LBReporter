@@ -48,6 +48,9 @@ class User(Base):
         new_user.created_at = str(json_data['created_at'])
         return new_user
 
+    def __repr__(self):
+        return 'User(username=%s, url=%s)' % (self.username, self.url)
+
 
 class Trade(Base):
     __tablename__ = 'trades'
@@ -95,6 +98,9 @@ class Trade(Base):
 
     def is_adv_owner(self, username):
         return self.adv_owner_username is username
+
+    def set_owner_username(self, username):
+        self.owner_username = username
 
     def get_btc_exchange_rate(self):
         if self.amount_currency is None or self.amount_btc is None:

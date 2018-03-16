@@ -14,5 +14,5 @@ class TradesDataSource:
     def get_last_trade(self, username):
         pass
 
-    def save_trades(self, trades, username):
+    def save_trades(self, trades, trades_owner):
         pass
