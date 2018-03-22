@@ -70,7 +70,7 @@ class Trade(Base):
     payment_method = Column(String(250), nullable=False)
     is_buying = Column(Boolean, nullable=False)
     reference_code = Column(String(250), nullable=False)
-    owner_username = Column(Integer, ForeignKey('users.username'))
+    owner_username = Column(String(50), ForeignKey('users.username'))
     user = relationship(User)
 
     def __init__(self, trade_id, seller_username, buyer_username,

@@ -25,20 +25,25 @@ session_factory = sessionmaker(bind=engine)
 
 
 class TradesDao:
-    def get_trades(self, session, username):
-        return session.query(Trade).join(username).order_by(Trade.released_at).all()
+    def get_trades(self, session, owner_username):
+        return session.query(Trade).join(owner_username).order_by(Trade.released_at).all()
 
-    def get_trade_by_id(self, session, username, trade_id):
+    def get_trade_by_id(self, session, trade_id, owner_username):
         pass
 
-    def get_last(self, session, username):
-        pass
+    def get_last(self, session, owner_username):
+        # TODO: maybe need to sorting by date:
+        trade = session.query(Trade).filter(Trade.owner_username == owner_username)[-1]
+        return trade
 
-    def insert_trades(self, session, trades):
+    def insert_trades(self, session, trades, owner_username):
+        for trade in trades:
+            trade.owner_username = owner_username
+
         session.add_all(trades)
         session.commit()
 
-    def update_trade(self, session, username, trade):
+    def update_trade(self, session, trade, owner_username):
         pass
 
 
@@ -47,12 +52,7 @@ class UserDao:
         return session.query(User).filter(User.username == username)
 
     def insert_user(self, session, user):
-        cached_user = session.query(User).filter(User.username == user.username)
-        if not cached_user.count():
-            session.add(user)
-        else:
-            pass  # TODO: need to update user
-
+        session.merge(user)
         session.commit()
 
 
@@ -71,7 +71,7 @@ class TradesLocalDataSource(TradesDataSource, QObject):
             map(lambda i: i.set_owner_username(trades_owner.username), trades)
             try:
                 self.__user_dao.insert_user(session, trades_owner)
-                self.__trades_dao.insert_trades(session, trades)
+                self.__trades_dao.insert_trades(session, trades, trades_owner.username)
             except Exception as e:
                 print(type(e))
                 print(e)
