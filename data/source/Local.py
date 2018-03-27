@@ -82,7 +82,7 @@ class TradesLocalDataSource(TradesDataSource, QObject):
 
         def get_all_trades(self, username):
             session = session_factory()
-            trades = self.__trades_dao.get_trades(session)
+            trades = self.__trades_dao.get_trades(session, username)
             session.close()
             if not trades:
                 self.on_data_not_available.emit()

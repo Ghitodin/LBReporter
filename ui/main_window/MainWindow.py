@@ -7,6 +7,7 @@ from AppConfig import APP_NAME
 from Settings import AppSettings
 from data.DataModel import User
 from data.source.TradesRepository import TradesRepository
+from model.table import TableModel
 from ui.autogen_ui.Ui_MainWindow import Ui_MainWindow
 from ui.settings_dialog.SettingsDialog import SettingsDialog
 
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
         self.local_bitcoins.on_user_received.connect(self.__on_user_obtained)
         self.local_bitcoins.on_request_started.connect(self.__on_request_to_api_ui_lock)
         self.local_bitcoins.on_request_finished.connect(self.__on_request_to_api_ui_unlock)
-        #self.local_bitcoins.on_error_occurred.connect(self.__on_request_to_api_ui_unlock)
+        # self.local_bitcoins.on_error_occurred.connect(self.__on_request_to_api_ui_unlock)
         self.local_bitcoins.on_trades_received.connect(self.__on_trades_obtained)
 
         self.__renew_user()
@@ -120,7 +121,9 @@ class MainWindow(QMainWindow):
 
         print(self.user)
 
-        self.trades_repo.save_trades(trades, self.user)
+        #self.trades_repo.save_trades(trades, self.user) # TODO: collisions %D
+        table_model = TableModel(trades)
+        self.ui.tableView.setModel(table_model)
 
     def __data_updated(self):
         self.ui.actionUpdate.setDisabled(False)
