@@ -138,6 +138,6 @@ class Trade(Base):
 
     def __repr__(self):
         return 'Trade(trade_id=%s, adv_owner_username=%s, trade_type=%s,' \
-               ' currency=%s, amount_currency=%s, amount_btc=%s, fee_btc=%s)'\
+               ' currency=%s, amount_currency=%s, amount_btc=%s, fee_btc=%s), released_at=%s'\
          % (self.trade_id, self.adv_owner_username, self.trade_type, self.currency,
-            self.amount_currency, self.amount_btc, self.fee_btc)
+            self.amount_currency, self.amount_btc, self.fee_btc, self.released_at)

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from EventLogger import EventLogger
@@ -17,6 +17,7 @@ class MainWindow(QMainWindow):
     user = User()
     local_bitcoins = LocalBitcoins()
     trades_repo = TradesRepository()
+    main_table_model = TableModel(list())
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -33,6 +34,8 @@ class MainWindow(QMainWindow):
         self.local_bitcoins.on_request_finished.connect(self.__on_request_to_api_ui_unlock)
         # self.local_bitcoins.on_error_occurred.connect(self.__on_request_to_api_ui_unlock)
         self.local_bitcoins.on_trades_received.connect(self.__on_trades_obtained)
+        # set models:
+        self.ui.tableView.setModel(self.main_table_model)
 
         self.__renew_user()
 
@@ -112,18 +115,16 @@ class MainWindow(QMainWindow):
         self.ui.actionUpdate.setDisabled(False)
 
     def __on_update_trades(self):
-        print('clicked')
         self.local_bitcoins.get_released_trades_test(self.app_settings.hmac, self.app_settings.hmac_secret)
 
     def __on_trades_obtained(self, trades):
-        for trade in trades:
-            print(trade)
-
         print(self.user)
 
         #self.trades_repo.save_trades(trades, self.user) # TODO: collisions %D
-        table_model = TableModel(trades)
-        self.ui.tableView.setModel(table_model)
+
+        for trade in trades:
+            print(trade)
+            self.main_table_model.insertRows(0, 1, trade, QModelIndex())
 
     def __data_updated(self):
         self.ui.actionUpdate.setDisabled(False)
